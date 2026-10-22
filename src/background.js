@@ -49,14 +49,8 @@ async function writeState(state) {
   await chrome.storage.session.set(record);
 }
 
-function messageAt(index) {
-  var messages = ScrollSaver.MESSAGES;
-  var safe = messages[index % messages.length];
-  return safe;
-}
-
 function payloadFor(state) {
-  var copy = messageAt(state.messageIndex);
+  var copy = ScrollSaver.jokeFor(state);
   return {
     ok: true,
     overlayVisible: state.overlayVisible === true,

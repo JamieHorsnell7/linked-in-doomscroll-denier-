@@ -37,3 +37,27 @@ ScrollSaver.MESSAGES = Object.freeze([
     text: "🖼️ Your Open to Work frame cannot see you from in here. Scroll Saver can. Put the feed down.",
   }),
 ]);
+
+// The scroll-distance line. A different one is shown each time the popup appears.
+ScrollSaver.DISTANCE_JOKES = Object.freeze([
+  Object.freeze({
+    kicker: "Thumb audit",
+    text: "😎 Your thumb has scrolled 3 football pitches. The algorithm thanks you for your service.",
+  }),
+  Object.freeze({
+    kicker: "High altitude",
+    text: "🗼 Your thumb has scrolled 2 Eiffel Towers. The view is still someone else's promotion.",
+  }),
+  Object.freeze({
+    kicker: "Bus lane",
+    text: "🚌 Your thumb has scrolled 9 London buses. All of them are terminating at this feed.",
+  }),
+  Object.freeze({
+    kicker: "Deep end",
+    text: "🏊 Your thumb has scrolled 5 Olympic pools. You are still in the shallow end of a carousel.",
+  }),
+  Object.freeze({
+    kicker: "Departure board",
+    text: "🛫 Your thumb has scrolled a Heathrow runway. The only departure left is the Close button.",
+  }),
+]);
