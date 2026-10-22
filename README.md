@@ -2,9 +2,9 @@
 
 A small Chrome extension that notices when LinkedIn has been open for a minute and sends in a hog.
 
-![Scrollhog intervention popup](docs/popup.png)
+![Scrollhog on LinkedIn after one minute](docs/popup.png)
 
-The card is the whole intervention. It does not take over the screen. Red bits on the card flash, the hog fidgets, and both buttons are one click:
+That card is the whole intervention, sitting on linkedin.com after the first minute. It does not take over the screen. Red bits on the card flash, the hog fidgets, and both buttons are one click:
 
 - **Ignore** hides it and brings it back after another 5 minutes of LinkedIn time.
 - **Close** shuts every open LinkedIn tab.
