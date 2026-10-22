@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScrollSaver preview</title>
+    <style>
+      html, body { margin: 0; height: 100%; }
+      body {
+        background: #e7e1d8;
+        color: #3c3732;
+        font-family: Georgia, serif;
+      }
+      .feed { max-width: 640px; margin: 28px auto; padding: 0 16px 80px; }
+      .bar {
+        height: 54px;
+        background: #f7f4ef;
+        border-bottom: 1px solid #ddd6cc;
+      }
+      .card {
+        margin-top: 16px;
+        padding: 16px;
+        background: #f7f4ef;
+        border: 1px solid #ddd6cc;
+        border-radius: 12px;
+      }
+      .line { height: 10px; margin: 10px 0; background: #e4ddd3; border-radius: 999px; }
+      .short { width: 42%; }
+      .mid { width: 78%; }
+    </style>
+  </head>
+  <body>
+    <div class="bar"></div>
+    <main class="feed">
+      <article class="card"><div class="line short"></div><div class="line"></div><div class="line mid"></div></article>
+      <article class="card"><div class="line mid"></div><div class="line"></div><div class="line short"></div></article>
+      <article class="card"><div class="line"></div><div class="line mid"></div><div class="line short"></div></article>
+    </main>
+    <script src="../src/messages.js"></script>
+    <script src="../src/config.js"></script>
+    <script src="../src/timer.js"></script>
+    <script src="../src/overlay.js"></script>
+    <script src="preview.js"></script>
+  </body>
+</html>

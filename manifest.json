@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Scroll Saver",
+  "version": "1.0.0",
+  "description": "A funny nudge when LinkedIn has had enough of your thumb. Closes the tab or snoozes for five minutes.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Scroll Saver is watching LinkedIn",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "permissions": ["storage", "alarms"],
+  "host_permissions": [
+    "https://*.linkedin.com/*",
+    "https://linkedin.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.linkedin.com/*",
+        "https://linkedin.com/*"
+      ],
+      "js": [
+        "src/config.js",
+        "src/messages.js",
+        "src/timer.js",
+        "src/overlay.js",
+        "src/content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "ISOLATED"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'none'; frame-ancestors 'none'"
+  }
+}
