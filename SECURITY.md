@@ -1,6 +1,6 @@
 # Security
 
-Scrollhog is a local Chrome extension. It watches how long LinkedIn stays open and draws a nudge on that page. It does not talk to a server, and it does not read your feed, messages, or account.
+Scroll Saver is a local Chrome extension. It watches how long LinkedIn stays open and draws a nudge on that page. It does not talk to a server, and it does not read your feed, messages, or account.
 
 ## Permissions
 

@@ -1,17 +1,17 @@
-# Scrollhog
+# Scroll Saver
 
-A small Chrome extension that notices when LinkedIn has been open for a minute and sends in a hog.
+A small Chrome extension that notices when LinkedIn has been open for a minute and sends in a smiling guy with a cape.
 
-![Scrollhog on LinkedIn after one minute](docs/popup.png)
+![Scroll Saver on LinkedIn after one minute](docs/popup.png)
 
-That card is the whole intervention, sitting on linkedin.com after the first minute. It does not take over the screen. Red bits on the card flash, the hog fidgets, and both buttons are one click:
+That card is the whole intervention, sitting on linkedin.com after the first minute. It does not take over the screen. Red bits on the card flash, Scroll Saver bobs, and both buttons are one click:
 
 - **Ignore** hides it and brings it back after another 5 minutes of LinkedIn time.
 - **Close** shuts every open LinkedIn tab.
 
 Time is one shared clock for every `linkedin.com` tab. A tab still counts when it is in the background. Two tabs do not count twice. Leaving the site pauses the clock. Closing the tabs with the button resets it, so the next visit gets a fresh minute.
 
-The tone borrows the playful, slightly cheeky energy of developer-tool brands such as PostHog. The words, the palette, and the hog are original. Scrollhog is not affiliated with PostHog or LinkedIn.
+The words, the palette, and the mascot are original. Scroll Saver is not affiliated with LinkedIn.
 
 ## Install it unpacked
 
@@ -19,8 +19,8 @@ The tone borrows the playful, slightly cheeky energy of developer-tool brands su
 2. Open `chrome://extensions`.
 3. Turn on **Developer mode**.
 4. Choose **Load unpacked** and select this folder (the one that contains `manifest.json`).
-5. Open [linkedin.com](https://www.linkedin.com). About 60 seconds later, the hog shows up.
-6. After you change a file, click **Reload** on the Scrollhog card.
+5. Open [linkedin.com](https://www.linkedin.com). About 60 seconds later, Scroll Saver shows up.
+6. After you change a file, click **Reload** on the Scroll Saver card.
 
 ## Test the timers faster
 

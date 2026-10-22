@@ -21,12 +21,12 @@ var host = null;
 var shadow = null;
 var heartbeatTimer = null;
 
-if (!globalThis.__scrollhogBooted) {
-  globalThis.__scrollhogBooted = true;
+if (!globalThis.__scrollsaverBooted) {
+  globalThis.__scrollsaverBooted = true;
   chrome.runtime.onMessage.addListener(onRuntimeMessage);
   window.addEventListener("keydown", onKeyDown, true);
   send("get-state").then(applyRemote);
-  heartbeatTimer = setInterval(heartbeat, Scrollhog.CONFIG.HEARTBEAT_MS);
+  heartbeatTimer = setInterval(heartbeat, ScrollSaver.CONFIG.HEARTBEAT_MS);
   heartbeat();
 }
 
@@ -57,7 +57,7 @@ function onKeyDown(event) {
 
 function applyRemote(payload) {
   if (!payload || payload.ok === false) return;
-  if (!Scrollhog.shouldApply(localRevision, payload.revision)) return;
+  if (!ScrollSaver.shouldApply(localRevision, payload.revision)) return;
   localRevision = payload.revision;
   if (payload.overlayVisible === true && isCopy(payload)) {
     show(payload);
@@ -72,11 +72,11 @@ function show(payload) {
   var root = ensureShadow();
   mounted = {
     text: payload.message,
-    handle: Scrollhog.mountOverlay(root, {
+    handle: ScrollSaver.mountOverlay(root, {
       kicker: payload.kicker,
       message: payload.message,
       elapsedMs: payload.elapsedMs,
-      snoozeMs: payload.snoozeMs || Scrollhog.CONFIG.SNOOZE_THRESHOLD_MS,
+      snoozeMs: payload.snoozeMs || ScrollSaver.CONFIG.SNOOZE_THRESHOLD_MS,
       onIgnore: dismiss,
       onClose: closeTabs,
     }),
@@ -105,7 +105,7 @@ function closeTabs() {
 function ensureShadow() {
   if (shadow && host && host.isConnected) return shadow;
   host = document.createElement("div");
-  host.id = "scrollhog-host";
+  host.id = "scrollsaver-host";
   pinHost(host);
   shadow = host.attachShadow({ mode: "closed" });
   var parent = document.documentElement || document.body;

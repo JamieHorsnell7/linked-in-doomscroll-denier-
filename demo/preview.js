@@ -1,7 +1,7 @@
 "use strict";
 
 var host = document.createElement("div");
-host.id = "scrollhog-host";
+host.id = "scrollsaver-host";
 var hostStyle = {
   position: "fixed",
   "z-index": "2147483647",
@@ -23,12 +23,12 @@ Object.keys(hostStyle).forEach(function (key) {
 var shadow = host.attachShadow({ mode: "closed" });
 document.documentElement.appendChild(host);
 
-var copy = Scrollhog.MESSAGES[0];
-Scrollhog.mountOverlay(shadow, {
+var copy = ScrollSaver.MESSAGES[0];
+ScrollSaver.mountOverlay(shadow, {
   kicker: copy.kicker,
   message: copy.text,
   elapsedMs: 60000,
-  snoozeMs: Scrollhog.CONFIG.SNOOZE_THRESHOLD_MS,
+  snoozeMs: ScrollSaver.CONFIG.SNOOZE_THRESHOLD_MS,
   onIgnore: function () {},
   onClose: function () {},
 });

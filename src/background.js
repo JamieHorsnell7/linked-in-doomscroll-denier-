@@ -2,8 +2,8 @@
 
 importScripts("config.js", "messages.js", "timer.js");
 
-var STORAGE_KEY = "scrollhog-state";
-var ALARM = "scrollhog-tick";
+var STORAGE_KEY = "scrollsaver-state";
+var ALARM = "scrollsaver-tick";
 var LINKEDIN_PATTERNS = ["https://*.linkedin.com/*", "https://linkedin.com/*"];
 
 var queue = Promise.resolve();
@@ -40,7 +40,7 @@ function fromLinkedIn(sender) {
 
 async function readState() {
   var stored = await chrome.storage.session.get(STORAGE_KEY);
-  return Scrollhog.normalizeState(stored[STORAGE_KEY]);
+  return ScrollSaver.normalizeState(stored[STORAGE_KEY]);
 }
 
 async function writeState(state) {
@@ -50,7 +50,7 @@ async function writeState(state) {
 }
 
 function messageAt(index) {
-  var messages = Scrollhog.MESSAGES;
+  var messages = ScrollSaver.MESSAGES;
   var safe = messages[index % messages.length];
   return safe;
 }
@@ -63,7 +63,7 @@ function payloadFor(state) {
     kicker: copy.kicker,
     message: copy.text,
     elapsedMs: state.shownElapsedMs || 0,
-    snoozeMs: Scrollhog.CONFIG.SNOOZE_THRESHOLD_MS,
+    snoozeMs: ScrollSaver.CONFIG.SNOOZE_THRESHOLD_MS,
     revision: state.revision,
   };
 }
@@ -103,12 +103,12 @@ async function onTick(now) {
   var state = await readState();
   if (tabCount === 0) {
     if (state.lastTick !== null) {
-      state = Scrollhog.pause(state);
+      state = ScrollSaver.pause(state);
       await writeState(state);
     }
     return state;
   }
-  var result = Scrollhog.applyHeartbeat(state, now, Scrollhog.CONFIG);
+  var result = ScrollSaver.applyHeartbeat(state, now, ScrollSaver.CONFIG);
   await writeState(result.state);
   if (result.action === "show") {
     var showMessage = payloadFor(result.state);
@@ -119,7 +119,7 @@ async function onTick(now) {
 }
 
 async function onIgnore(now) {
-  var state = Scrollhog.applyIgnore(await readState(), now);
+  var state = ScrollSaver.applyIgnore(await readState(), now);
   await writeState(state);
   await broadcast({ type: "hide", revision: state.revision });
   return state;
@@ -141,7 +141,7 @@ async function onClose(sender) {
       // A tab may close itself before the group removal lands.
     }
   }
-  var state = Scrollhog.applyReset(await readState());
+  var state = ScrollSaver.applyReset(await readState());
   await writeState(state);
   return state;
 }

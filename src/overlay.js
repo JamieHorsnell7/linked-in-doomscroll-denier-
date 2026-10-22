@@ -1,8 +1,12 @@
 "use strict";
 
-var Scrollhog = Scrollhog || {};
+var ScrollSaver = ScrollSaver || {};
 
 var SVG_NS = "http://www.w3.org/2000/svg";
+var NAVY = "#1c2340";
+var RED = "#e10600";
+var SKIN = "#ffd8bf";
+var SUIT = "#3b82f6";
 
 var OVERLAY_CSS = [
   ".root {",
@@ -10,9 +14,9 @@ var OVERLAY_CSS = [
   "  display: block;",
   "  box-sizing: border-box;",
   "  pointer-events: auto;",
-  "  color: #1b1714;",
+  "  color: #1c2340;",
   "  color-scheme: light;",
-  "  font-family: Georgia, 'Iowan Old Style', Palatino, 'Palatino Linotype', 'Times New Roman', serif;",
+  "  font-family: 'Trebuchet MS', 'Segoe UI', Helvetica, Arial, sans-serif;",
   "  font-size: 16px;",
   "  line-height: 1.35;",
   "  -webkit-font-smoothing: antialiased;",
@@ -23,23 +27,20 @@ var OVERLAY_CSS = [
   "  display: block;",
   "  width: 100%;",
   "  padding: 16px 18px 14px;",
-  "  border: 3px solid #1b1714;",
-  "  border-radius: 22px;",
-  "  background:",
-  "    radial-gradient(circle at 12% 0%, rgba(255, 200, 87, 0.55), transparent 28%),",
-  "    radial-gradient(circle at 100% 100%, rgba(225, 6, 0, 0.08), transparent 32%),",
-  "    #fff6ea;",
-  "  box-shadow: 8px 8px 0 #1b1714, 0 0 0 3px #e10600;",
-  "  animation: scrollhog-arrive 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both, scrollhog-flash 1.5s ease-in-out 420ms infinite;",
+  "  border: 3px solid #1c2340;",
+  "  border-radius: 28px;",
+  "  background: linear-gradient(180deg, #f8fbff 0%, #e4f0ff 100%);",
+  "  box-shadow: 0 14px 34px rgba(28, 35, 64, 0.16), 0 0 0 3px #e10600;",
+  "  animation: scrollsaver-arrive 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both, scrollsaver-flash 1.5s ease-in-out 420ms infinite;",
   "}",
   ".stripe {",
   "  height: 8px;",
   "  margin: -16px -18px 14px;",
-  "  border-bottom: 3px solid #1b1714;",
-  "  border-radius: 18px 18px 0 0;",
-  "  background-image: repeating-linear-gradient(90deg, #e10600 0 14px, #1b1714 14px 20px, #ffc857 20px 34px, #1b1714 34px 40px);",
-  "  background-size: 80px 8px;",
-  "  animation: scrollhog-march 1.1s linear infinite;",
+  "  border-bottom: 3px solid #1c2340;",
+  "  border-radius: 24px 24px 0 0;",
+  "  background-image: repeating-linear-gradient(90deg, #e10600 0 12px, #ffffff 12px 18px, #7eb6ff 18px 30px, #ffffff 30px 36px);",
+  "  background-size: 72px 8px;",
+  "  animation: scrollsaver-march 1.1s linear infinite;",
   "}",
   ".top {",
   "  display: flex;",
@@ -52,10 +53,9 @@ var OVERLAY_CSS = [
   "  align-items: center;",
   "  gap: 8px;",
   "  margin: 0;",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
-  "  font-size: 12px;",
-  "  font-weight: 700;",
-  "  letter-spacing: 0.16em;",
+  "  font-size: 13px;",
+  "  font-weight: 800;",
+  "  letter-spacing: 0.08em;",
   "  text-transform: uppercase;",
   "}",
   ".dot {",
@@ -64,44 +64,43 @@ var OVERLAY_CSS = [
   "  border-radius: 999px;",
   "  background: #e10600;",
   "  box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.2);",
-  "  animation: scrollhog-dot 1.5s ease-in-out infinite;",
+  "  animation: scrollsaver-dot 1.5s ease-in-out infinite;",
   "}",
   ".pill {",
   "  margin: 0;",
   "  padding: 4px 8px;",
-  "  border: 2px solid #1b1714;",
+  "  border: 2px solid #1c2340;",
   "  border-radius: 999px;",
   "  background: #fff;",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
   "  font-size: 10px;",
-  "  font-weight: 700;",
+  "  font-weight: 800;",
   "  letter-spacing: 0.08em;",
   "  text-transform: uppercase;",
   "}",
   ".stage {",
   "  display: flex;",
   "  justify-content: center;",
-  "  margin: 2px 0 0;",
+  "  margin: 0;",
   "}",
-  ".hog {",
-  "  width: 148px;",
-  "  height: 118px;",
+  ".hero {",
+  "  width: 156px;",
+  "  height: 124px;",
   "  overflow: visible;",
   "  transform-origin: 50% 80%;",
-  "  animation: scrollhog-bob 2.6s ease-in-out infinite;",
+  "  animation: scrollsaver-bob 2.6s ease-in-out infinite;",
   "}",
-  ".quills {",
-  "  transform-origin: 100px 90px;",
-  "  animation: scrollhog-sway 2.2s ease-in-out infinite;",
+  ".cape {",
+  "  transform-origin: 100px 78px;",
+  "  animation: scrollsaver-cape 1.8s ease-in-out infinite;",
   "}",
   ".eye {",
   "  transform-box: fill-box;",
   "  transform-origin: center;",
-  "  animation: scrollhog-blink 4.2s infinite;",
+  "  animation: scrollsaver-blink 4.2s infinite;",
   "}",
-  ".flag {",
-  "  transform-origin: 78px 112px;",
-  "  animation: scrollhog-flag 1.8s ease-in-out infinite;",
+  ".wave {",
+  "  transform-origin: 142px 112px;",
+  "  animation: scrollsaver-wave 1.6s ease-in-out infinite;",
   "}",
   ".stamp {",
   "  position: absolute;",
@@ -110,43 +109,40 @@ var OVERLAY_CSS = [
   "  margin: 0;",
   "  padding: 4px 7px;",
   "  border: 2px solid #e10600;",
-  "  border-radius: 6px;",
+  "  border-radius: 8px;",
   "  color: #e10600;",
-  "  background: rgba(255, 246, 234, 0.72);",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
+  "  background: rgba(255, 255, 255, 0.82);",
   "  font-size: 11px;",
   "  font-weight: 800;",
   "  letter-spacing: 0.14em;",
   "  transform: rotate(8deg);",
-  "  animation: scrollhog-stamp 1.5s ease-in-out infinite;",
+  "  animation: scrollsaver-stamp 1.5s ease-in-out infinite;",
   "}",
   ".kicker {",
   "  margin: 0;",
-  "  color: #9f0d16;",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
+  "  color: #c41018;",
   "  font-size: 11px;",
-  "  font-weight: 700;",
+  "  font-weight: 800;",
   "  letter-spacing: 0.14em;",
   "  text-transform: uppercase;",
   "}",
   ".message {",
   "  min-height: 4.5em;",
   "  margin: 6px 0 0;",
-  "  font-size: 23px;",
-  "  font-weight: 700;",
+  "  font-size: 22px;",
+  "  font-weight: 800;",
   "  letter-spacing: -0.02em;",
-  "  line-height: 1.22;",
+  "  line-height: 1.25;",
   "}",
   ".clock {",
   "  display: inline-block;",
   "  margin: 10px 0 0;",
   "  padding: 3px 8px;",
   "  border-radius: 999px;",
-  "  background: #1b1714;",
-  "  color: #fff6ea;",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
+  "  background: #1c2340;",
+  "  color: #f8fbff;",
   "  font-size: 12px;",
-  "  font-weight: 700;",
+  "  font-weight: 800;",
   "}",
   ".actions {",
   "  display: flex;",
@@ -159,8 +155,8 @@ var OVERLAY_CSS = [
   "  flex: 1 1 0;",
   "  min-height: 52px;",
   "  padding: 10px 12px;",
-  "  border: 3px solid #1b1714;",
-  "  border-radius: 14px;",
+  "  border: 3px solid #1c2340;",
+  "  border-radius: 16px;",
   "  font-family: 'Trebuchet MS', 'Segoe UI', Helvetica, Arial, sans-serif;",
   "  font-size: 16px;",
   "  font-weight: 800;",
@@ -171,75 +167,73 @@ var OVERLAY_CSS = [
   "button small {",
   "  display: block;",
   "  margin-top: 3px;",
-  "  font-family: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;",
   "  font-size: 10px;",
-  "  font-weight: 700;",
+  "  font-weight: 800;",
   "  letter-spacing: 0.04em;",
   "  text-transform: uppercase;",
   "}",
   ".ignore {",
-  "  background: #ffc857;",
-  "  color: #1b1714;",
-  "  box-shadow: 4px 4px 0 #1b1714;",
+  "  background: #ffffff;",
+  "  color: #1c2340;",
+  "  box-shadow: 0 6px 0 #b9d4ff;",
   "}",
   ".close {",
-  "  background: #1b1714;",
-  "  color: #fff6ea;",
-  "  box-shadow: 4px 4px 0 #e10600;",
+  "  background: #1c2340;",
+  "  color: #f8fbff;",
+  "  box-shadow: 0 6px 0 #e10600;",
   "}",
-  "button:hover { transform: translate(-1px, -1px); }",
-  "button:active { transform: translate(2px, 2px); box-shadow: 0 0 0 #1b1714; }",
+  "button:hover { transform: translateY(-1px); }",
+  "button:active { transform: translateY(2px); box-shadow: 0 0 0 #e10600; }",
   "button:focus-visible { outline: 3px solid #e10600; outline-offset: 3px; }",
   ".fine {",
   "  margin: 12px 0 0;",
-  "  color: #4a433c;",
-  "  font-family: 'Trebuchet MS', 'Segoe UI', Helvetica, Arial, sans-serif;",
+  "  color: #3d4766;",
   "  font-size: 12px;",
   "  line-height: 1.4;",
   "}",
-  "@keyframes scrollhog-arrive {",
+  "@keyframes scrollsaver-arrive {",
   "  from { transform: translateY(-18px) scale(0.97) rotate(-1deg); }",
   "  to { transform: translateY(0) scale(1) rotate(0deg); }",
   "}",
-  "@keyframes scrollhog-flash {",
-  "  0%, 100% { box-shadow: 8px 8px 0 #1b1714, 0 0 0 3px #e10600; }",
-  "  50% { box-shadow: 8px 8px 0 #1b1714, 0 0 0 6px #ffb1a6; }",
+  "@keyframes scrollsaver-flash {",
+  "  0%, 100% { box-shadow: 0 14px 34px rgba(28, 35, 64, 0.16), 0 0 0 3px #e10600; }",
+  "  50% { box-shadow: 0 14px 34px rgba(28, 35, 64, 0.16), 0 0 0 7px #ffb1a6; }",
   "}",
-  "@keyframes scrollhog-march {",
+  "@keyframes scrollsaver-march {",
   "  from { background-position: 0 0; }",
-  "  to { background-position: 80px 0; }",
+  "  to { background-position: 72px 0; }",
   "}",
-  "@keyframes scrollhog-dot {",
+  "@keyframes scrollsaver-dot {",
   "  0%, 100% { background: #e10600; box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.18); }",
   "  50% { background: #ff8d84; box-shadow: 0 0 0 6px rgba(225, 6, 0, 0.08); }",
   "}",
-  "@keyframes scrollhog-bob {",
+  "@keyframes scrollsaver-bob {",
   "  0%, 100% { transform: translateY(0) rotate(-2deg); }",
   "  50% { transform: translateY(-7px) rotate(2deg); }",
   "}",
-  "@keyframes scrollhog-sway {",
-  "  0%, 100% { transform: rotate(-3deg); }",
-  "  50% { transform: rotate(4deg); }",
+  "@keyframes scrollsaver-cape {",
+  "  0%, 100% { transform: rotate(-6deg) scaleX(1); }",
+  "  50% { transform: rotate(6deg) scaleX(1.04); }",
   "}",
-  "@keyframes scrollhog-blink {",
+  "@keyframes scrollsaver-blink {",
   "  0%, 42%, 48%, 100% { transform: scaleY(1); }",
   "  45% { transform: scaleY(0.08); }",
   "}",
-  "@keyframes scrollhog-flag {",
+  "@keyframes scrollsaver-wave {",
   "  0%, 100% { transform: rotate(-8deg); }",
-  "  50% { transform: rotate(7deg); }",
+  "  50% { transform: rotate(14deg); }",
   "}",
-  "@keyframes scrollhog-stamp {",
+  "@keyframes scrollsaver-stamp {",
   "  0%, 100% { opacity: 1; }",
   "  50% { opacity: 0.45; }",
   "}",
   "@media (prefers-reduced-motion: reduce) {",
-  "  .card, .stripe, .dot, .hog, .quills, .eye, .flag, .stamp { animation: none; }",
-  "  .card { box-shadow: 8px 8px 0 #1b1714, 0 0 0 4px #e10600; }",
+  "  .card, .stripe, .dot, .hero, .cape, .eye, .wave, .stamp { animation: none; }",
+  "  .card { box-shadow: 0 14px 34px rgba(28, 35, 64, 0.16), 0 0 0 4px #e10600; }",
   "}",
 ].join("\n");
 
-Scrollhog.mountOverlay = function (shadow, options) {
+ScrollSaver.mountOverlay = function (shadow, options) {
   clearNode(shadow);
 
   var sheet = new CSSStyleSheet();
@@ -250,14 +244,14 @@ Scrollhog.mountOverlay = function (shadow, options) {
   var card = el("section", "card");
   card.setAttribute("role", "dialog");
   card.setAttribute("aria-modal", "false");
-  card.setAttribute("aria-labelledby", "scrollhog-title");
+  card.setAttribute("aria-labelledby", "scrollsaver-title");
 
   card.appendChild(el("div", "stripe"));
 
   var top = el("div", "top");
   var brand = el("p", "brand");
   brand.appendChild(el("span", "dot"));
-  brand.appendChild(document.createTextNode("Scrollhog"));
+  brand.appendChild(document.createTextNode("Scroll Saver"));
   var pill = el("p", "pill");
   pill.textContent = "Live intervention";
   top.appendChild(brand);
@@ -265,7 +259,7 @@ Scrollhog.mountOverlay = function (shadow, options) {
   card.appendChild(top);
 
   var stage = el("div", "stage");
-  stage.appendChild(createHog());
+  stage.appendChild(createHero());
   card.appendChild(stage);
 
   var stamp = el("p", "stamp");
@@ -277,7 +271,7 @@ Scrollhog.mountOverlay = function (shadow, options) {
   card.appendChild(kicker);
 
   var message = el("p", "message");
-  message.id = "scrollhog-title";
+  message.id = "scrollsaver-title";
   message.textContent = options.message;
   card.appendChild(message);
 
@@ -288,7 +282,7 @@ Scrollhog.mountOverlay = function (shadow, options) {
   var actions = el("div", "actions");
   var ignore = button("ignore", "Ignore", "snooze " + formatDuration(options.snoozeMs));
   var close = button("close", "Close", "every LinkedIn tab");
-  ignore.setAttribute("aria-describedby", "scrollhog-title");
+  ignore.setAttribute("aria-describedby", "scrollsaver-title");
   ignore.addEventListener("click", function (event) {
     event.preventDefault();
     options.onIgnore();
@@ -323,95 +317,84 @@ Scrollhog.mountOverlay = function (shadow, options) {
   };
 };
 
-Scrollhog.formatDuration = formatDuration;
-Scrollhog.formatElapsed = formatElapsed;
+ScrollSaver.formatDuration = formatDuration;
+ScrollSaver.formatElapsed = formatElapsed;
 
-function createHog() {
+function createHero() {
   var svg = svgEl("svg", {
-    class: "hog",
-    viewBox: "0 0 200 150",
+    class: "hero",
+    viewBox: "0 0 200 160",
     role: "img",
-    "aria-label": "A round hedgehog holding a tiny red flag",
+    "aria-label": "Scroll Saver, a round smiling cartoon with a small red cape",
   });
 
-  var quills = svgEl("g", { class: "quills" });
-  [
-    [78, 78, -36, "#c4512b"],
-    [96, 62, -12, "#8a3d22"],
-    [116, 58, 6, "#c4512b"],
-    [136, 68, 24, "#8a3d22"],
-    [68, 98, -58, "#a34728"],
-    [148, 88, 42, "#c4512b"],
-    [86, 70, -24, "#e07a45"],
-  ].forEach(function (spike) {
-    quills.appendChild(spikeAt(spike[0], spike[1], spike[2], spike[3]));
-  });
-  svg.appendChild(quills);
-
   svg.appendChild(shape("ellipse", {
-    cx: "108", cy: "146", rx: "46", ry: "6", fill: "#1b1714", opacity: "0.12",
-  }));
-  svg.appendChild(shape("ellipse", {
-    cx: "112", cy: "104", rx: "54", ry: "40", fill: "#f3c7a4", stroke: "#1b1714", "stroke-width": "3",
-  }));
-  svg.appendChild(shape("ellipse", {
-    cx: "122", cy: "116", rx: "30", ry: "22", fill: "#ffe6cf", stroke: "#1b1714", "stroke-width": "2",
-  }));
-  svg.appendChild(shape("ellipse", {
-    cx: "74", cy: "96", rx: "14", ry: "16", fill: "#f3c7a4", stroke: "#1b1714", "stroke-width": "3",
-  }));
-  svg.appendChild(shape("ellipse", {
-    cx: "74", cy: "98", rx: "6", ry: "8", fill: "#ef8d86",
+    cx: "100", cy: "148", rx: "46", ry: "6", fill: NAVY, opacity: "0.12",
   }));
 
-  var flag = svgEl("g", { class: "flag" });
-  flag.appendChild(shape("line", {
-    x1: "78", y1: "116", x2: "62", y2: "64", stroke: "#1b1714", "stroke-width": "3", "stroke-linecap": "round",
+  var cape = svgEl("g", { class: "cape" });
+  cape.appendChild(shape("path", {
+    d: "M78 84 C36 96 28 132 62 150 C80 128 92 112 98 92 Z",
+    fill: RED,
+    stroke: NAVY,
+    "stroke-width": "3",
+    "stroke-linejoin": "round",
   }));
-  flag.appendChild(shape("polygon", {
-    points: "62,64 98,72 62,84", fill: "#e10600", stroke: "#1b1714", "stroke-width": "2", "stroke-linejoin": "round",
+  cape.appendChild(shape("path", {
+    d: "M122 84 C164 96 172 132 138 150 C120 128 108 112 102 92 Z",
+    fill: RED,
+    stroke: NAVY,
+    "stroke-width": "3",
+    "stroke-linejoin": "round",
   }));
-  svg.appendChild(flag);
+  svg.appendChild(cape);
 
   svg.appendChild(shape("ellipse", {
-    cx: "80", cy: "118", rx: "10", ry: "7", fill: "#e7a57a", stroke: "#1b1714", "stroke-width": "2",
+    cx: "100", cy: "118", rx: "36", ry: "28", fill: SUIT, stroke: NAVY, "stroke-width": "3",
   }));
-  svg.appendChild(shape("ellipse", {
-    cx: "150", cy: "108", rx: "26", ry: "18", fill: "#e7a57a", stroke: "#1b1714", "stroke-width": "3",
-  }));
-  svg.appendChild(shape("ellipse", {
-    cx: "166", cy: "106", rx: "6", ry: "5", fill: "#1b1714",
-  }));
-  svg.appendChild(shape("circle", {
-    cx: "98", cy: "96", r: "5.5", fill: "#1b1714", class: "eye",
-  }));
-  svg.appendChild(shape("circle", {
-    cx: "120", cy: "94", r: "5.5", fill: "#1b1714", class: "eye",
-  }));
-  svg.appendChild(shape("circle", { cx: "100", cy: "94", r: "1.4", fill: "#fff6ea" }));
-  svg.appendChild(shape("circle", { cx: "122", cy: "92", r: "1.4", fill: "#fff6ea" }));
-  svg.appendChild(shape("path", {
-    d: "M86 84 Q96 76 106 84", fill: "none", stroke: "#1b1714", "stroke-width": "2.5", "stroke-linecap": "round",
-  }));
-  svg.appendChild(shape("path", {
-    d: "M112 80 Q122 70 134 82", fill: "none", stroke: "#1b1714", "stroke-width": "2.5", "stroke-linecap": "round",
-  }));
-  svg.appendChild(shape("path", {
-    d: "M142 116 Q154 124 168 114", fill: "none", stroke: "#1b1714", "stroke-width": "2.5", "stroke-linecap": "round",
-  }));
-  svg.appendChild(shape("circle", { cx: "132", cy: "112", r: "5", fill: "#ff8b7a", opacity: "0.9" }));
-  return svg;
-}
-
-function spikeAt(x, y, rotation, fill) {
-  return shape("polygon", {
-    points: "0,-26 9,7 -9,7",
-    fill: fill,
-    stroke: "#1b1714",
+  svg.appendChild(shape("polygon", {
+    points: "100,104 104,112 112,113 106,118 108,126 100,122 92,126 94,118 88,113 96,112",
+    fill: "#fff",
+    stroke: NAVY,
     "stroke-width": "2",
     "stroke-linejoin": "round",
-    transform: "translate(" + x + " " + y + ") rotate(" + rotation + ")",
-  });
+  }));
+
+  var wave = svgEl("g", { class: "wave" });
+  wave.appendChild(shape("line", {
+    x1: "128", y1: "112", x2: "150", y2: "96",
+    stroke: NAVY, "stroke-width": "4", "stroke-linecap": "round",
+  }));
+  wave.appendChild(shape("circle", {
+    cx: "154", cy: "92", r: "8", fill: SKIN, stroke: NAVY, "stroke-width": "3",
+  }));
+  svg.appendChild(wave);
+
+  svg.appendChild(shape("circle", {
+    cx: "100", cy: "74", r: "34", fill: SKIN, stroke: NAVY, "stroke-width": "3",
+  }));
+  svg.appendChild(shape("path", {
+    d: "M70 66 Q86 42 100 50 Q114 42 130 66 Q114 54 100 58 Q86 54 70 66 Z",
+    fill: NAVY,
+  }));
+  svg.appendChild(shape("circle", {
+    cx: "86", cy: "74", r: "5.5", fill: NAVY, class: "eye",
+  }));
+  svg.appendChild(shape("circle", {
+    cx: "114", cy: "74", r: "5.5", fill: NAVY, class: "eye",
+  }));
+  svg.appendChild(shape("circle", { cx: "88", cy: "72", r: "1.6", fill: "#fff" }));
+  svg.appendChild(shape("circle", { cx: "116", cy: "72", r: "1.6", fill: "#fff" }));
+  svg.appendChild(shape("path", {
+    d: "M78 86 Q100 112 122 86",
+    fill: "none",
+    stroke: NAVY,
+    "stroke-width": "4",
+    "stroke-linecap": "round",
+  }));
+  svg.appendChild(shape("circle", { cx: "74", cy: "86", r: "5", fill: "#ff8f86", opacity: "0.9" }));
+  svg.appendChild(shape("circle", { cx: "126", cy: "86", r: "5", fill: "#ff8f86", opacity: "0.9" }));
+  return svg;
 }
 
 function button(className, label, hint) {

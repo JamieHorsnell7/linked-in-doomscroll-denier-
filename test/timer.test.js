@@ -6,7 +6,7 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function loadScrollhog() {
+function loadScrollSaver() {
   const context = {
     console,
     Object,
@@ -26,13 +26,13 @@ function loadScrollhog() {
     const code = fs.readFileSync(path.join(__dirname, "..", "src", file), "utf8");
     vm.runInContext(code, context, { filename: file });
   }
-  return context.Scrollhog;
+  return context.ScrollSaver;
 }
 
 let load;
 
 test("shipped thresholds are 60 seconds then 5 minutes", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   assert.equal(load.CONFIG.INITIAL_THRESHOLD_MS, 60 * 1000);
   assert.equal(load.CONFIG.SNOOZE_THRESHOLD_MS, 5 * 60 * 1000);
   assert.ok(load.MESSAGES.length >= 4);
@@ -42,7 +42,7 @@ test("shipped thresholds are 60 seconds then 5 minutes", () => {
 });
 
 test("first nudge lands at 60 seconds of wall-clock time, not before", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   let step = load.applyHeartbeat(state, 0, config);
@@ -57,7 +57,7 @@ test("first nudge lands at 60 seconds of wall-clock time, not before", () => {
 });
 
 test("overlapping LinkedIn tabs share one clock", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   state = load.applyHeartbeat(state, 0, config).state;
@@ -69,7 +69,7 @@ test("overlapping LinkedIn tabs share one clock", () => {
 });
 
 test("unfocused ticks still count, sleep gaps do not", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   state = load.applyHeartbeat(state, 0, config).state;
@@ -89,7 +89,7 @@ test("unfocused ticks still count, sleep gaps do not", () => {
 });
 
 test("Ignore waits another 5 minutes on LinkedIn, then rotates the joke", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   state = load.applyHeartbeat(state, 0, config).state;
@@ -125,7 +125,7 @@ test("Ignore waits another 5 minutes on LinkedIn, then rotates the joke", () => 
 });
 
 test("closing the tabs resets the next visit to the 60 second nudge", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   state = load.applyHeartbeat(state, 0, config).state;
@@ -141,7 +141,7 @@ test("closing the tabs resets the next visit to the 60 second nudge", () => {
 });
 
 test("time away from LinkedIn does not keep accruing", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const config = load.CONFIG;
   let state = load.createState();
   state = load.applyHeartbeat(state, 1000, config).state;
@@ -156,7 +156,7 @@ test("time away from LinkedIn does not keep accruing", () => {
 });
 
 test("stale messages cannot overwrite a newer Ignore", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   assert.equal(load.shouldApply(-1, 0), true);
   assert.equal(load.shouldApply(4, 4), true);
   assert.equal(load.shouldApply(5, 4), false);
@@ -170,7 +170,7 @@ test("stale messages cannot overwrite a newer Ignore", () => {
 });
 
 test("stored state drops junk and keeps a safe clock", () => {
-  load = loadScrollhog();
+  load = loadScrollSaver();
   const clean = load.normalizeState({
     accumulatedMs: 12000,
     lastTick: 50,

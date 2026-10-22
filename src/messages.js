@@ -1,12 +1,12 @@
 "use strict";
 
-var Scrollhog = Scrollhog || {};
+var ScrollSaver = ScrollSaver || {};
 
-// Original copy. The hog is ours; the feed is the joke.
-Scrollhog.MESSAGES = Object.freeze([
+// Original copy. Scroll Saver is the joke's straight man; the feed is the bit.
+ScrollSaver.MESSAGES = Object.freeze([
   Object.freeze({
     kicker: "Thumb audit",
-    text: "🦔 Your thumb has scrolled 3 football pitches. The algorithm thanks you for your service.",
+    text: "😎 Your thumb has scrolled 3 football pitches. The algorithm thanks you for your service.",
   }),
   Object.freeze({
     kicker: "Not networking",
@@ -34,6 +34,6 @@ Scrollhog.MESSAGES = Object.freeze([
   }),
   Object.freeze({
     kicker: "Open to work",
-    text: "🖼️ Your Open to Work frame cannot see you from in here. The hog can. Put the feed down.",
+    text: "🖼️ Your Open to Work frame cannot see you from in here. Scroll Saver can. Put the feed down.",
   }),
 ]);

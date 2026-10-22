@@ -1,11 +1,11 @@
 "use strict";
 
-var Scrollhog = Scrollhog || {};
+var ScrollSaver = ScrollSaver || {};
 
 // Wall clock while any LinkedIn tab is open. Two tabs do not count twice.
 // lastTick null means the clock is paused (no LinkedIn tabs, or not started).
 
-Scrollhog.createState = function () {
+ScrollSaver.createState = function () {
   return {
     accumulatedMs: 0,
     lastTick: null,
@@ -17,7 +17,7 @@ Scrollhog.createState = function () {
   };
 };
 
-Scrollhog.cloneState = function (state) {
+ScrollSaver.cloneState = function (state) {
   return {
     accumulatedMs: state.accumulatedMs,
     lastTick: state.lastTick,
@@ -29,13 +29,13 @@ Scrollhog.cloneState = function (state) {
   };
 };
 
-Scrollhog.thresholdFor = function (state, config) {
+ScrollSaver.thresholdFor = function (state, config) {
   if (state.phase === "snooze") return config.SNOOZE_THRESHOLD_MS;
   return config.INITIAL_THRESHOLD_MS;
 };
 
-Scrollhog.normalizeState = function (raw) {
-  var next = Scrollhog.createState();
+ScrollSaver.normalizeState = function (raw) {
+  var next = ScrollSaver.createState();
   if (!raw || typeof raw !== "object") return next;
 
   if (isSafeDuration(raw.accumulatedMs)) next.accumulatedMs = raw.accumulatedMs;
@@ -47,14 +47,14 @@ Scrollhog.normalizeState = function (raw) {
   }
   if (isIndex(raw.messageIndex)) next.messageIndex = Math.floor(raw.messageIndex);
   if (isIndex(raw.revision)) next.revision = Math.floor(raw.revision);
-  if (Scrollhog.MESSAGES && Scrollhog.MESSAGES.length) {
-    next.messageIndex = next.messageIndex % Scrollhog.MESSAGES.length;
+  if (ScrollSaver.MESSAGES && ScrollSaver.MESSAGES.length) {
+    next.messageIndex = next.messageIndex % ScrollSaver.MESSAGES.length;
   }
   return next;
 };
 
-Scrollhog.applyHeartbeat = function (state, now, config) {
-  var next = Scrollhog.cloneState(state);
+ScrollSaver.applyHeartbeat = function (state, now, config) {
+  var next = ScrollSaver.cloneState(state);
   next.revision = state.revision + 1;
 
   if (typeof now !== "number" || !Number.isFinite(now)) {
@@ -85,16 +85,16 @@ Scrollhog.applyHeartbeat = function (state, now, config) {
   return finishIfDue(next, config);
 };
 
-Scrollhog.pause = function (state) {
-  var next = Scrollhog.cloneState(state);
+ScrollSaver.pause = function (state) {
+  var next = ScrollSaver.cloneState(state);
   next.revision = state.revision + 1;
   next.lastTick = null;
   return next;
 };
 
-Scrollhog.applyIgnore = function (state, now) {
-  var count = Scrollhog.MESSAGES.length || 1;
-  var next = Scrollhog.cloneState(state);
+ScrollSaver.applyIgnore = function (state, now) {
+  var count = ScrollSaver.MESSAGES.length || 1;
+  var next = ScrollSaver.cloneState(state);
   next.revision = state.revision + 1;
   next.accumulatedMs = 0;
   next.lastTick = now;
@@ -105,20 +105,20 @@ Scrollhog.applyIgnore = function (state, now) {
   return next;
 };
 
-Scrollhog.applyReset = function (state) {
-  var next = Scrollhog.createState();
+ScrollSaver.applyReset = function (state) {
+  var next = ScrollSaver.createState();
   next.revision = (state && state.revision ? state.revision : 0) + 1;
   return next;
 };
 
-Scrollhog.shouldApply = function (localRevision, remoteRevision) {
+ScrollSaver.shouldApply = function (localRevision, remoteRevision) {
   return typeof remoteRevision === "number" &&
     Number.isFinite(remoteRevision) &&
     remoteRevision >= localRevision;
 };
 
 function finishIfDue(state, config) {
-  if (!state.overlayVisible && state.accumulatedMs >= Scrollhog.thresholdFor(state, config)) {
+  if (!state.overlayVisible && state.accumulatedMs >= ScrollSaver.thresholdFor(state, config)) {
     state.overlayVisible = true;
     state.shownElapsedMs = state.accumulatedMs;
     return { state: state, action: "show" };
