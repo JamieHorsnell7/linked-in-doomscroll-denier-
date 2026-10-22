@@ -23,7 +23,7 @@ Object.keys(hostStyle).forEach(function (key) {
 var shadow = host.attachShadow({ mode: "closed" });
 document.documentElement.appendChild(host);
 
-var copy = ScrollSaver.MESSAGES[0];
+var copy = ScrollSaver.DISTANCE_JOKES[0];
 ScrollSaver.mountOverlay(shadow, {
   kicker: copy.kicker,
   message: copy.text,

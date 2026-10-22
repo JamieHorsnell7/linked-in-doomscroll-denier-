@@ -12,6 +12,8 @@ ScrollSaver.createState = function () {
     phase: "initial",
     overlayVisible: false,
     messageIndex: 0,
+    distanceIndex: 0,
+    shownDistanceIndex: 0,
     shownElapsedMs: 0,
     revision: 0,
   };
@@ -24,6 +26,8 @@ ScrollSaver.cloneState = function (state) {
     phase: state.phase,
     overlayVisible: state.overlayVisible,
     messageIndex: state.messageIndex,
+    distanceIndex: state.distanceIndex,
+    shownDistanceIndex: state.shownDistanceIndex,
     shownElapsedMs: state.shownElapsedMs,
     revision: state.revision,
   };
@@ -46,10 +50,16 @@ ScrollSaver.normalizeState = function (raw) {
     next.lastTick = raw.lastTick;
   }
   if (isIndex(raw.messageIndex)) next.messageIndex = Math.floor(raw.messageIndex);
+  if (isIndex(raw.distanceIndex)) next.distanceIndex = Math.floor(raw.distanceIndex);
+  if (isIndex(raw.shownDistanceIndex)) {
+    next.shownDistanceIndex = Math.floor(raw.shownDistanceIndex);
+  }
   if (isIndex(raw.revision)) next.revision = Math.floor(raw.revision);
   if (ScrollSaver.MESSAGES && ScrollSaver.MESSAGES.length) {
     next.messageIndex = next.messageIndex % ScrollSaver.MESSAGES.length;
   }
+  next.distanceIndex = next.distanceIndex % distanceCount();
+  next.shownDistanceIndex = next.shownDistanceIndex % distanceCount();
   return next;
 };
 
@@ -108,7 +118,19 @@ ScrollSaver.applyIgnore = function (state, now) {
 ScrollSaver.applyReset = function (state) {
   var next = ScrollSaver.createState();
   next.revision = (state && state.revision ? state.revision : 0) + 1;
+  // The next visit should not open on the joke that was just on screen.
+  if (state && isIndex(state.distanceIndex)) {
+    next.distanceIndex = Math.floor(state.distanceIndex) % distanceCount();
+  }
   return next;
+};
+
+ScrollSaver.jokeFor = function (state) {
+  var jokes = ScrollSaver.DISTANCE_JOKES;
+  if (!jokes || !jokes.length) return ScrollSaver.MESSAGES[0];
+  var index = state && state.overlayVisible ? state.shownDistanceIndex : state && state.distanceIndex;
+  if (!isIndex(index)) index = 0;
+  return jokes[Math.floor(index) % jokes.length];
 };
 
 ScrollSaver.shouldApply = function (localRevision, remoteRevision) {
@@ -121,9 +143,22 @@ function finishIfDue(state, config) {
   if (!state.overlayVisible && state.accumulatedMs >= ScrollSaver.thresholdFor(state, config)) {
     state.overlayVisible = true;
     state.shownElapsedMs = state.accumulatedMs;
+    lockDistanceJoke(state);
     return { state: state, action: "show" };
   }
   return { state: state, action: "none" };
+}
+
+function lockDistanceJoke(state) {
+  var count = distanceCount();
+  var current = isIndex(state.distanceIndex) ? Math.floor(state.distanceIndex) % count : 0;
+  state.shownDistanceIndex = current;
+  state.distanceIndex = (current + 1) % count;
+}
+
+function distanceCount() {
+  var jokes = ScrollSaver.DISTANCE_JOKES;
+  return jokes && jokes.length ? jokes.length : 1;
 }
 
 function isSafeDuration(value) {

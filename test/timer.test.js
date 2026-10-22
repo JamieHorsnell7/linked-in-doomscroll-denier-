@@ -177,6 +177,8 @@ test("stored state drops junk and keeps a safe clock", () => {
     phase: "snooze",
     overlayVisible: true,
     messageIndex: 3,
+    distanceIndex: 4,
+    shownDistanceIndex: 2,
     shownElapsedMs: 12000,
     revision: 9,
     message: "<script>",
@@ -184,6 +186,8 @@ test("stored state drops junk and keeps a safe clock", () => {
   assert.equal(clean.accumulatedMs, 12000);
   assert.equal(clean.phase, "snooze");
   assert.equal(clean.messageIndex, 3);
+  assert.equal(clean.distanceIndex, 4);
+  assert.equal(clean.shownDistanceIndex, 2);
   assert.equal(clean.revision, 9);
   assert.equal(clean.message, undefined);
 
@@ -191,10 +195,84 @@ test("stored state drops junk and keeps a safe clock", () => {
     accumulatedMs: -5,
     phase: "nope",
     messageIndex: -1,
+    distanceIndex: -1,
+    shownDistanceIndex: 5,
     revision: Number.POSITIVE_INFINITY,
   });
   assert.equal(garbage.accumulatedMs, 0);
   assert.equal(garbage.phase, "initial");
   assert.equal(garbage.messageIndex, 0);
+  assert.equal(garbage.distanceIndex, 0);
+  assert.equal(garbage.shownDistanceIndex, 0);
   assert.equal(garbage.revision, 0);
+});
+
+test("the scroll-distance joke changes every time the popup shows", () => {
+  load = loadScrollSaver();
+  const jokes = load.DISTANCE_JOKES;
+  assert.equal(jokes.length, 5);
+  const bodies = jokes.map((joke) => joke.text);
+  assert.equal(new Set(bodies).size, 5);
+  assert.equal(bodies[0], load.MESSAGES[0].text);
+  assert.ok(bodies.some((text) => text.includes("Eiffel Towers")));
+  assert.ok(bodies.some((text) => text.includes("London buses")));
+  for (const joke of jokes) {
+    assert.ok(joke.kicker.length < 80);
+    assert.ok(joke.text.length < 400);
+  }
+
+  const background = fs.readFileSync(path.join(__dirname, "..", "src", "background.js"), "utf8");
+  assert.ok(background.includes("ScrollSaver.jokeFor"));
+
+  const config = load.CONFIG;
+  let state = load.createState();
+  let now = 0;
+  const shown = [];
+
+  function reveal() {
+    let step = load.applyHeartbeat(state, now, config);
+    state = step.state;
+    while (step.action !== "show") {
+      now += 30000;
+      step = load.applyHeartbeat(state, now, config);
+      state = step.state;
+      assert.ok(now < 60 * 60 * 1000, "popup did not show");
+    }
+    shown.push(load.jokeFor(state).text);
+    const parked = load.applyHeartbeat(state, now + 1000, config);
+    assert.equal(parked.action, "none");
+    assert.equal(parked.state.shownDistanceIndex, state.shownDistanceIndex);
+    assert.equal(parked.state.distanceIndex, state.distanceIndex);
+    assert.equal(load.jokeFor(parked.state).text, load.jokeFor(state).text);
+    state = load.applyIgnore(parked.state, now + 1000);
+    now += 1000;
+  }
+
+  reveal();
+  for (let i = 0; i < 5; i += 1) reveal();
+
+  assert.deepEqual(shown, [...bodies, bodies[0]]);
+  for (let i = 1; i < shown.length; i += 1) {
+    assert.notEqual(shown[i], shown[i - 1]);
+  }
+});
+
+test("closing LinkedIn does not bring the same distance joke straight back", () => {
+  load = loadScrollSaver();
+  const config = load.CONFIG;
+  let state = load.createState();
+  let step = load.applyHeartbeat(state, 0, config);
+  step = load.applyHeartbeat(step.state, 60000, config);
+  assert.equal(step.action, "show");
+  assert.equal(load.jokeFor(step.state).text, load.DISTANCE_JOKES[0].text);
+
+  state = load.applyReset(step.state);
+  assert.equal(state.phase, "initial");
+  assert.equal(state.overlayVisible, false);
+  assert.equal(state.distanceIndex, 1);
+
+  step = load.applyHeartbeat(state, 0, config);
+  step = load.applyHeartbeat(step.state, 60000, config);
+  assert.equal(step.action, "show");
+  assert.equal(load.jokeFor(step.state).text, load.DISTANCE_JOKES[1].text);
 });
